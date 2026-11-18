@@ -90,16 +90,33 @@ Follow the instructions on screen. The second line gives permission to save pict
 
 ## How to install
 
+### The easy way (one line)
+
+Open Claude Code, type this line and press Enter:
+
+```
+/plugin install file-github-issue --marketplace subin-shk/file-github-issue
+```
+
+That's it. Claude now knows the skill.
+
+**That didn't work?** You may have an older version of Claude Code. Use these two lines instead, one at a time:
+
+```
+/plugin marketplace add subin-shk/file-github-issue
+/plugin install file-github-issue@subin-shk
+```
+
+### Or copy it by hand
+
 1. Download this project: click the green **Code** button at the top of this page, then **Download ZIP**, and unzip it.
-2. Inside, find the folder called **`file-github-issue`**.
+2. Open the **`skills`** folder inside it and find the folder called **`file-github-issue`**.
 3. Copy that folder into your Claude skills folder:
    - **Windows:** `C:\Users\<your name>\.claude\skills\`
    - **Mac / Linux:** `~/.claude/skills/`
 
    If the `skills` folder doesn't exist yet, create it.
 4. Restart Claude Code.
-
-That's it. Claude now knows the skill.
 
 ---
 
@@ -113,7 +130,7 @@ Just talk to Claude normally. The skill starts on its own when you say things li
 - "**Add a feature request**: customers want a wishlist"
 - "**Create a task** to update the help page screenshots"
 
-You can also start it directly by typing **`/file-github-issue`**.
+You can also start it directly: type **`/`** in Claude Code and choose **file-github-issue** from the list.
 
 If you've already been chatting with Claude about a problem, just say **"file the issue"**. Claude uses what you discussed and only asks about anything missing.
 
@@ -153,11 +170,20 @@ If you've already been chatting with Claude about a problem, just say **"file th
 ## What's in this project
 
 ```
-file-github-issue/              ← the skill (this is the folder you copy)
-├── SKILL.md                    ← instructions Claude follows
-└── scripts/
-    ├── upload_evidence.sh      ← saves pictures and videos to your gist
-    ├── setup_capture.sh        ← one-time setup for taking screenshots
-    └── capture_template.mjs    ← takes the before/after pictures, animation and video
-docs/                           ← example pictures used on this page
+skills/
+└── file-github-issue/              ← the skill (this is the folder you copy)
+    ├── SKILL.md                    ← instructions Claude follows
+    └── scripts/
+        ├── upload_evidence.sh      ← saves pictures and videos to your gist
+        ├── setup_capture.sh        ← one-time setup for taking screenshots
+        └── capture_template.mjs    ← takes the before/after pictures, animation and video
+.claude-plugin/                     ← lets Claude Code install it with one line
+docs/                               ← example pictures used on this page
+LICENSE                             ← MIT: free for anyone to use, change and share
 ```
+
+---
+
+## License
+
+Free to use, change and share under the [MIT License](LICENSE).

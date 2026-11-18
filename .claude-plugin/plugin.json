@@ -1,0 +1,14 @@
+{
+  "name": "file-github-issue",
+  "displayName": "File GitHub Issue",
+  "version": "1.0.0",
+  "description": "Report a problem in your own words and get a clear, plain-language GitHub issue (Bug, Feature or Task) with before/after screenshots, a step-by-step GIF and video evidence stored in your own secret gist.",
+  "author": {
+    "name": "subin-shk",
+    "url": "https://github.com/subin-shk"
+  },
+  "homepage": "https://github.com/subin-shk/file-github-issue",
+  "repository": "https://github.com/subin-shk/file-github-issue",
+  "license": "MIT",
+  "keywords": ["github", "issues", "bug-report", "feature-request", "screenshots", "gist", "qa", "skill"]
+}

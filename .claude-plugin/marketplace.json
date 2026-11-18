@@ -1,0 +1,15 @@
+{
+  "name": "subin-shk",
+  "description": "Free Claude Code skills by subin-shk.",
+  "owner": {
+    "name": "subin-shk",
+    "url": "https://github.com/subin-shk"
+  },
+  "plugins": [
+    {
+      "name": "file-github-issue",
+      "source": "./",
+      "description": "File plain-language GitHub issues (Bug, Feature or Task) with before/after screenshots and a step-by-step GIF, stored in your own secret gist."
+    }
+  ]
+}
