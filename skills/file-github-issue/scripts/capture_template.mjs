@@ -9,7 +9,8 @@
 // never end up in a file. The run produces, in OUT_DIR:
 //   before.png, after.png  - the before/after pair (same viewport, same page)
 //   steps.gif              - every step with its caption above it; plays inside the issue
-//   recording.webm         - the full run as a video (linked from the issue)
+//   recording.mp4          - the full run as a video, linked from the issue
+//                            (recording.webm if no MP4 converter could be found)
 //   facts.txt              - what the page actually said at key moments
 import { chromium } from 'playwright';
 import gifenc from 'gifenc'; // CommonJS package: import the default, then pick
@@ -18,6 +19,7 @@ const { GIFEncoder, quantize, applyPalette } = gifenc;
 const { PNG } = pngjs;
 import fs from 'node:fs';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 
 const BASE_URL = process.env.BASE_URL || 'about:blank';
 const OUT_DIR = path.resolve(process.env.OUT_DIR || './evidence');
@@ -97,6 +99,15 @@ async function fact(label, value) {
   console.log('  ' + line);
 }
 
+/** ffmpeg from the ffmpeg-static package (installed by setup_capture.sh), else from PATH. */
+async function findFfmpeg() {
+  try {
+    const m = await import('ffmpeg-static');
+    if (m.default && fs.existsSync(m.default)) return m.default;
+  } catch {}
+  return spawnSync('ffmpeg', ['-version']).status === 0 ? 'ffmpeg' : null;
+}
+
 async function finish() {
   if (frames.length) frames[frames.length - 1].delay = 3500; // linger on the result
   const gif = GIFEncoder();
@@ -112,7 +123,18 @@ async function finish() {
   const video = page.video();
   await context.close();
   await composerContext.close();
-  if (video) fs.renameSync(await video.path(), path.join(OUT_DIR, 'recording.webm'));
+  if (video) {
+    const webm = path.join(OUT_DIR, 'recording.webm');
+    fs.renameSync(await video.path(), webm);
+    // Playwright only records WebM; MP4 (H.264) plays in every browser.
+    const ffmpeg = await findFfmpeg();
+    const mp4 = path.join(OUT_DIR, 'recording.mp4');
+    const r = ffmpeg && spawnSync(ffmpeg, ['-y', '-loglevel', 'error', '-i', webm,
+      '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '26', '-pix_fmt', 'yuv420p',
+      '-movflags', '+faststart', '-an', mp4]);
+    if (r && r.status === 0 && fs.existsSync(mp4)) fs.rmSync(webm);
+    else console.log('NOTE: no MP4 converter available, keeping recording.webm');
+  }
   fs.rmSync(path.join(OUT_DIR, '.video'), { recursive: true, force: true });
   await browser.close();
   for (const f of fs.readdirSync(OUT_DIR)) {

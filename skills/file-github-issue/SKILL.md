@@ -36,8 +36,42 @@ Write for someone who has never seen the code:
 - **Steps**: numbered, one action per step, in the order a person would do them, starting from a place anyone can reach (e.g. "Go to the website's home page"). Name buttons and menus exactly as they appear on screen, in **bold**.
 - **Actual** and **Expected**: concrete and observable. Describe what you see, not guesses about the cause.
 - Don't invent details the user didn't give. If something important is unknown (such as the browser), ask, or leave it out.
+- Plain language doesn't mean renaming technical things. Keep function names, commands, setting names and error messages exactly as they are, in `code` formatting, and explain around them in simple words.
 
-Use this exact structure for the body:
+### First, check for the repo's own issue template
+
+Many projects ask for issues in their own format, and an issue that ignores it often gets closed. Check before writing:
+
+```bash
+bash "<this skill's folder>/scripts/find_issue_templates.sh" <owner/repo>
+```
+
+It prints each template the repo uses, plus its `config.yml` if there is one, or `NO_TEMPLATES`. If the repo has no templates of its own, the script also checks the owner's shared `.github` repo, which GitHub uses as the fallback.
+
+If there are templates:
+
+- **Pick the one that fits the type**, going by its name, `about`/`description`, labels and `type`, e.g. "Bug report" for a Bug and "Feature request" for a Feature. If none fits (often the case for a Task), use this skill's own structure below, unless `config.yml` says `blank_issues_enabled: false`. In that case use the closest template.
+- **Their structure, your content.** Use their headings, in their order and wording, and put the content you gathered where it belongs ("Describe the bug" ← Description, "To Reproduce" ← Steps to Reproduce, "Expected behavior" ← Expected Result, "Screenshots" or "Logs" ← Evidence). If one of their sections covers two of yours (e.g. "Expected vs actual behavior"), put both in it under bold labels: **Actual:** … **Expected:** …. Never drop or rename their sections.
+- **Content with no matching section.** In a Markdown template, add it as its own section, using the same heading level as the template's, where it reads naturally: Pre-condition just before the steps, Evidence at the end. In an issue form, don't add sections the form doesn't have. Fold the content into the closest field instead, e.g. Pre-condition as a short "Before you start:" line at the top of the steps field, and anything else in "Additional context" if the form has one.
+- **Read the template's comments before removing them.** Replace placeholder text and `<!-- comments -->` with real content, but read each comment first, because some carry instructions for the reporter. If one says security problems must be reported privately, and this is one, stop and tell the user. Don't file it publicly.
+- **Answer what the template asks.** If it asks for something you don't know (app version, operating system, which option in a required dropdown), ask the user. Never guess, and never file with a placeholder left in. Write "Not known" only where free text is allowed and the user doesn't know either. Tick a checkbox (`- [x]`) only when it's true. For example, tick "I searched existing issues" only after actually searching with `gh issue list --repo <owner/repo> --search "<key words>" --state all`. That search is worth doing anyway: if a matching issue exists, tell the user and suggest adding to it instead.
+- **Markdown templates (`.md`)** start with a header block between `---` lines. `title` is a prefix for the issue title (such as `[BUG] `). Apply its `labels` (only ones that exist in the repo) and `assignees`.
+- **Issue forms (`.yml`)**: GitHub turns a submitted form into a `### <field label>` section per field, in order. Build the body exactly that way, so the issue looks as if it came through the form:
+  - `markdown` items are instructions only: read them, but leave them out of the body.
+  - `input` / `textarea`: write the answer. If the field has `render: <language>`, put the answer in a code block.
+  - `dropdown`: one of its `options`, copied exactly. If it has `multiple: true`, list the chosen options separated by commas, in the form's order.
+  - `checkboxes`: `- [x] <label>` or `- [ ] <label>`.
+  - Fields with `validations: required: true` must be answered. For optional fields you can't fill, write `_No response_`, which is what GitHub writes.
+  - The form's own `title`, `labels`, `assignees` and `type` apply just like a Markdown template's.
+
+  Put the evidence in the field whose description asks for screenshots, logs or "what happened". If no field fits, use "Additional context" if there is one, and add a final `### Evidence` section only as a last resort.
+- **Respect the project's rules.** Some templates or contributing guides say issues must be written by a human, or that feature requests belong in Discussions instead. If you see a rule like that, tell the user in plain words before filing, and let them decide.
+- **Keep the type visible.** A template usually has no Type section. Set the type through GitHub (step 4). If neither an issue type nor a label can be set, add `**Type:** Bug` (or Feature, or Task) as the first line.
+- In the preview, say in one line which template you followed (e.g. "Used the repo's *Bug report* template").
+
+### Otherwise, use this skill's structure
+
+With no repo template, use this exact structure for the body:
 
 ```markdown
 ## Type
@@ -105,7 +139,7 @@ If the problem is on a website or web app you can reach (live site, staging, or 
    - Wait on real things (`settle: () => page.getByText('Saved').waitFor()`) rather than fixed delays.
 3. **Run it** with a new, empty output folder:
    `cd "$CAPTURE_DIR" && BASE_URL="<url>" OUT_DIR="<empty folder>" node capture.mjs`
-   You get `before.png`, `after.png`, `steps.gif`, `recording.webm` and `facts.txt`. If the site needs a login, ask the user to set `EVIDENCE_USER` and `EVIDENCE_PASSWORD` (ideally a test account). Never write passwords into the script or the issue.
+   You get `before.png`, `after.png`, `steps.gif`, `recording.mp4` and `facts.txt`. If the site needs a login, ask the user to set `EVIDENCE_USER` and `EVIDENCE_PASSWORD` (ideally a test account). Never write passwords into the script or the issue.
 4. **Look at the pictures before uploading.** Open `before.png`, `after.png` and a few GIF frames. If *after* doesn't clearly show the problem, the steps aren't right yet, so fix the flow and run it again. A picture that doesn't show the problem proves nothing. If the problem doesn't happen at all, tell the user. It may already be fixed, or need steps you don't know yet.
 
 The capture really clicks and types. On a live site, don't run steps that buy something, delete things, send emails or change real customers' data. Use a staging site or test account, or ask the user first, and undo test changes afterwards if you can.
@@ -118,7 +152,17 @@ For desktop or phone apps, sites behind a login you don't have, or a customer's 
 - **Mac**: press **Cmd + Shift + 4** for a screenshot, or **Cmd + Shift + 5** to record the screen.
 - **Phone**: the normal screenshot buttons, or Screen Recording from the quick-settings panel.
 
+**Command-line tools and error messages:** the evidence is the exact text, not a picture. Paste the command and its full output in a code block. If the user only described the error from memory, ask them to copy the real text. If they can't, say in the issue that the message is paraphrased.
+
 Ask them to save the files and tell you where they are. If they pasted an image into the chat, explain that you need the saved file's location (for example `C:\Users\me\Desktop\error.png`) to upload it. If they have no evidence, carry on without it.
+
+If a recording isn't already MP4 (Macs save `.mov`, some tools save `.webm` or `.mkv`), convert it first so it opens anywhere:
+
+```bash
+bash "<this skill's folder>/scripts/to_mp4.sh" "<recording>"
+```
+
+It prints `MP4=<path>`. Upload that file. The script uses ffmpeg if it's installed, otherwise the copy that `setup_capture.sh` installs. If neither is available, upload the original file.
 
 ### 3c. Upload to the user's own gist
 
@@ -129,7 +173,7 @@ bash "<this skill's folder>/scripts/upload_evidence.sh" -t "<issue title>" "<fil
 The script creates a **secret** gist in the user's GitHub account and pushes the files to it with git (the gist API only accepts text files). It prints one line of Markdown per file under `---MARKDOWN---`:
 
 - Images and GIFs come back as `![...](...)` and display inside the issue. GIFs play automatically.
-- Videos (`.webm`, `.mp4`, `.mov`) come back as a "🎥 Watch video" link. GitHub only plays videos that are dragged into its own editor, so a link is the best a gist can do, and some browsers download the file instead of playing it. That's why the GIF matters: it's the thing people will actually watch.
+- Videos come back as a "🎥 Download video" link. GitHub only plays videos that are dragged into its own editor, and a gist serves an MP4 as a download, so clicking the link saves the file, which then opens in any video player. That's why the GIF matters: it's the thing people will actually watch in the issue.
 - If the token is missing the gist permission, ask the user to run `gh auth refresh -s gist`. If gh isn't logged in, ask them to run `gh auth login`.
 
 **Privacy check before uploading.** "Secret" gists are unlisted, not private: anyone who has the link can open them. Tell the user this in plain words before uploading, especially if the repository is private or the screenshots might show personal data, passwords, customer details or internal information. Upload only once they're comfortable, or let them crop or blur the files first.
@@ -148,12 +192,14 @@ Put the pair side by side in a table, with headings that say what each picture s
 
 ![steps](<url>)
 
-🎥 [Watch the full recording](<url>)
+🎥 [Download the full recording (MP4)](<url>)
 
 **What the screen showed:**
 - <fact, in plain words>
 - <fact>
 ```
+
+When following a repo template, put this same content inside the template's screenshots or evidence section instead.
 
 ## 4. Show a preview and file it
 
@@ -167,10 +213,10 @@ Write the body to a temporary file and use `--body-file`. Passing it inline brea
 
 Also record the type in GitHub itself, so the issue can be filtered by it. Use only what already exists in the repo, and never create new types or labels:
 
-- **Issue type** (`--type`): GitHub's built-in issue types are Bug, Feature and Task, the same three this skill uses, but only repositories owned by an organization have them. If the owner is an organization, check with `gh api orgs/<owner>/issue-types --jq '.[].name'` and pass the matching name, e.g. `--type Bug`. If the org renamed them, use the closest one. For personal repos, or if the call fails, skip this. The Type section in the body still shows it.
+- **Issue type** (`--type`): GitHub's built-in issue types are Bug, Feature and Task, the same three this skill uses, but only repositories owned by an organization have them. If the template sets a `type`, use that. Otherwise, for an organization's repo, pass `--type Bug`, `--type Feature` or `--type Task`. Don't try to list the org's types first: listing usually needs admin rights, even when setting a type works fine. For personal repos, skip this. The Type section in the body still shows it.
 - **Label** (`--label`): check `gh label list --repo <owner/repo>` and add the closest existing label: Bug → `bug`, Feature → `enhancement` or `feature`, Task → `task` (or `documentation` if the task is about docs). If nothing fits, add no label.
 
-If `gh issue create` fails because of `--type` (older gh versions don't have it), retry without it and tell the user the type is shown in the body only.
+If `gh issue create` fails because of `--type` or `--label`, retry without the part that failed. Older gh versions lack `--type`, an org may have renamed its types, and people outside a project often can't set labels or types at all. Then tell the user in one line what couldn't be set. The issue itself still says what type it is.
 
 Finish by giving the user the issue link and the gist link, in one or two plain sentences.
 
@@ -212,7 +258,7 @@ The new phone number is kept after reloading, and a message such as "Profile sav
 
 ![steps](https://gist.githubusercontent.com/sam/abc123/raw/def456/03-steps.gif)
 
-🎥 [Watch the full recording](https://gist.githubusercontent.com/sam/abc123/raw/def456/04-recording.webm)
+🎥 [Download the full recording (MP4)](https://gist.githubusercontent.com/sam/abc123/raw/def456/04-recording.mp4)
 
 **What the screen showed:**
 - Phone number before saving: 555-0199

@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # One-time setup for browser capture: a small Node project with Playwright
-# (drives a real browser), gifenc + pngjs (turn screenshots into an animated GIF
-# without needing ffmpeg). Safe to run again; it only installs what's missing.
+# (drives a real browser), gifenc + pngjs (turn screenshots into an animated GIF)
+# and ffmpeg-static (a full ffmpeg, to save recordings as MP4, which every
+# browser plays). Safe to run again; it only installs what's missing.
 #
 # Prints the folder to run capture scripts from as the last line:
 #   CAPTURE_DIR=/home/me/.cache/file-github-issue/capture
@@ -20,9 +21,9 @@ if [ ! -f package.json ]; then
 EOF
 fi
 
-if [ ! -d node_modules/playwright ] || [ ! -d node_modules/gifenc ] || [ ! -d node_modules/pngjs ]; then
+if [ ! -d node_modules/playwright ] || [ ! -d node_modules/gifenc ] || [ ! -d node_modules/pngjs ] || [ ! -d node_modules/ffmpeg-static ]; then
   echo "Installing capture tools (first time only)..." >&2
-  npm install --silent --no-audit --no-fund playwright gifenc pngjs >&2
+  npm install --silent --no-audit --no-fund playwright gifenc pngjs ffmpeg-static >&2
 fi
 
 # Downloads Chromium only if this Playwright version doesn't have it yet.

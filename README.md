@@ -16,11 +16,11 @@ Claude does the rest.
 
 1. **Asks a couple of simple questions** if anything is missing, such as which project it's for.
 2. **Works out what kind of issue it is**: a **Bug** (something is broken), a **Feature** (something new or better is wanted) or a **Task** (a job that needs doing).
-3. **Writes the issue** in plain words, with clear numbered steps.
+3. **Writes the issue** in plain words, with clear numbered steps. If the project has its own issue form or template, Claude fills that in instead, so your issue looks exactly the way the project asks for.
 4. **Takes the pictures for you.** If the problem is on a website, Claude opens it, follows the steps itself and captures:
    - a **Before** and **After** screenshot, side by side
    - a short **step-by-step animation** that plays right inside the issue
-   - a full **video** of what happened
+   - a full **video** of what happened, saved as MP4 so it opens on any computer or phone
 5. **Shows you a preview** so you can check and change anything.
 6. **Files it on GitHub** only when you say it looks good, and gives you the link.
 
@@ -28,7 +28,7 @@ Claude does the rest.
 
 ## What a finished issue looks like
 
-Every issue has the same easy-to-read sections:
+If the project has no issue template of its own, every issue has the same easy-to-read sections:
 
 | Section | What it says |
 |---|---|
@@ -52,6 +52,20 @@ Here is the Evidence section from a real test issue:
 ![Step-by-step animation](docs/example-steps.gif)
 
 Each step has a caption on top, and whatever is being clicked is outlined in red, so anyone can follow along.
+
+---
+
+## Works with your project's own issue template
+
+Many projects have their own issue form, for example "Bug report" or "Feature request" with set questions. Claude checks for one first. If it finds one, it:
+
+- uses the project's form, with its questions in their order,
+- fills each question with what you told it, and adds the before/after pictures where screenshots belong,
+- asks you for anything the form needs that it doesn't know, such as an app version,
+- searches for an existing issue about the same problem, so you don't file a duplicate,
+- tells you about any project rules first, such as "feature ideas go in Discussions".
+
+If there's no template, Claude uses its own clear layout shown above.
 
 ---
 
@@ -84,7 +98,7 @@ gh auth refresh -s gist
 
 Follow the instructions on screen. The second line gives permission to save pictures in your gists.
 
-> The first time Claude takes screenshots itself, it downloads a small browser for the job (about 150 MB). This only happens once.
+> The first time Claude takes screenshots itself, it downloads a small browser and a video converter for the job (about 200 MB). This only happens once.
 
 ---
 
@@ -163,7 +177,7 @@ If you've already been chatting with Claude about a problem, just say **"file th
 | "Node.js is not installed" | Install it from [nodejs.org](https://nodejs.org), or give Claude your own screenshots instead |
 | "File is larger than 100 MB" | Make the video shorter or smaller, then try again |
 | A picture doesn't show right after uploading | Wait a minute and refresh. GitHub can take a moment |
-| The video link downloads instead of playing | This is normal in some browsers. Open the downloaded file, or watch the animation in the issue |
+| Clicking the video link downloads a file | That's expected. Open the downloaded MP4 in any video player, or watch the animation in the issue |
 
 ---
 
@@ -176,7 +190,9 @@ skills/
     └── scripts/
         ├── upload_evidence.sh      ← saves pictures and videos to your gist
         ├── setup_capture.sh        ← one-time setup for taking screenshots
-        └── capture_template.mjs    ← takes the before/after pictures, animation and video
+        ├── capture_template.mjs    ← takes the before/after pictures, animation and video
+        ├── to_mp4.sh               ← turns any screen recording into an MP4
+        └── find_issue_templates.sh ← finds the project's own issue templates
 .claude-plugin/                     ← lets Claude Code install it with one line
 docs/                               ← example pictures used on this page
 LICENSE                             ← MIT: free for anyone to use, change and share

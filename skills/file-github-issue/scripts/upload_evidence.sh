@@ -13,7 +13,7 @@
 #   GIST_URL=https://gist.github.com/<id>
 #   ---MARKDOWN---
 #   ![login-error](https://gist.githubusercontent.com/<user>/<id>/raw/<sha>/01-login-error.png)
-#   🎥 [Watch video: checkout-freeze](https://gist.githubusercontent.com/.../02-checkout-freeze.mp4)
+#   🎥 [Download video: checkout-freeze](https://gist.githubusercontent.com/.../02-checkout-freeze.mp4)
 set -euo pipefail
 
 title="Issue evidence"
@@ -100,7 +100,7 @@ for idx in "${!names[@]}"; do
     png|jpg|jpeg|gif|webp|bmp)
       echo "![${label}](${url})" ;;
     mp4|mov|webm|mkv|avi|m4v)
-      echo "🎥 [Watch video: ${label}](${url})" ;;
+      echo "🎥 [Download video: ${label}](${url})" ;;
     *)
       echo "📎 [${label}](${url})" ;;
   esac
